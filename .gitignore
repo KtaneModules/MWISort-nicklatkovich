@@ -1,0 +1,32 @@
+steam_api64.dll
+steam_appid.txt
+ProjectSettings/
+Temp/
+UnityPackageManager/
+Library/
+build/
+Assets/*
+
+!Assets/Editor.meta
+!Assets/Editor/
+Assets/Editor/*
+!Assets/Editor/Resources.meta
+!Assets/Editor/Resources/
+
+Manual/Template Manual.html
+Manual/css/
+Manual/font/
+Manual/img/*
+!Manual/img/Component/
+Manual/img/Component/*
+Manual/js/
+
+Assembly-CSharp*
+/*.sln
+obj/
+Models/*
+
+# MWISort
+!Assets/MWISort.meta
+!Assets/MWISort/
+!Manual/img/Component/MWISort.svg
