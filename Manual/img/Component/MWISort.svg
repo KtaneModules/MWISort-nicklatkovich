@@ -58,7 +58,8 @@
      inkscape:window-x="54"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg849" />
+     inkscape:current-layer="svg849"
+     inkscape:document-rotation="0" />
   <path
      d="M5.079 5.776h336.913v337.67H5.08z"
      stroke-width="2"
@@ -85,16 +86,6 @@
      height="25.767515"
      x="43.5"
      y="126.62102" />
-  <text
-     xml:space="preserve"
-     style="font-size:40px;line-height:1.25;font-family:'Ostrich Sans';-inkscape-font-specification:'Ostrich Sans, Normal'"
-     x="67.605095"
-     y="123.01911"
-     id="text877"><tspan
-       sodipodi:role="line"
-       id="tspan875"
-       x="67.605095"
-       y="123.01911"></tspan></text>
   <rect
      style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:4.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.27"
      id="rect873-9"
