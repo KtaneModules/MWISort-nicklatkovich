@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 33509436932169614}
   - component: {fileID: 65114155567122882}
   - component: {fileID: 23665915972796428}
+  - component: {fileID: 114761476980115830}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -494,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - KT/Mobile/Diffuse
+  - KT/Mobile/DiffuseTint
 --- !u!114 &114560062685077610
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -571,6 +572,19 @@ MonoBehaviour:
   AllowSelectionWrapY: 0
   ForceSelectionHighlight: 0
   ForceInteractionHighlight: 0
+--- !u!114 &114761476980115830
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1975258878689956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - Unlit/Color
 --- !u!114 &114763048717744028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -609,8 +623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Children:
-  - {fileID: 0}
+  Children: []
   IsPassThrough: 0
   ChildRowLength: 1
   Highlight: {fileID: 114444700634725752}

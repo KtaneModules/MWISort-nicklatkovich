@@ -10,6 +10,15 @@ public class ResetButtonComponent : MonoBehaviour {
 		}
 	}
 
+	private bool _solved = false;
+	public bool solved {
+		get { return _solved; }
+		set {
+			_solved = value;
+			UpdateText();
+		}
+	}
+
 	public TextMesh Text;
 	public KMSelectable Selectable;
 
@@ -18,6 +27,6 @@ public class ResetButtonComponent : MonoBehaviour {
 	}
 
 	public void UpdateText() {
-		Text.text = active ? "RESET" : "";
+		Text.text = solved ? "GG" : (active ? "RESET" : "");
 	}
 }
