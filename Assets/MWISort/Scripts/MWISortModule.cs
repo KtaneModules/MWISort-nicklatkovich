@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
+using Array = System.Array;
 
 public class MWISortModule : MonoBehaviour {
 	public const int LAYERS_COUNT = 5;
@@ -12,6 +15,16 @@ public class MWISortModule : MonoBehaviour {
 
 	private static int moduleIdCounter = 1;
 
+	public readonly string TwitchHelpMessage = new[] {
+		"\"!{0} press 5\" - press digit by its value (word \"press\" is optional)",
+		"\"!{0} fill\" - fill the current display from left to right with unused digits in ascending order",
+		"\"!{0} reset\" - press the reset button",
+		"\"!{0} input 0123456789\" - try to fill the current display with the provided digits",
+		"commands \"input\" and \"fill\" can be chained with \"!{0} chain 2085947163;2859471630;8592413067;fill\"",
+		"Timer is disabled",
+	}.Join(" | ");
+
+	public bool TwitchPlaysActive;
 	public KMSelectable Selectable;
 	public KMAudio Audio;
 	public KMBombModule BombModule;
@@ -51,7 +64,7 @@ public class MWISortModule : MonoBehaviour {
 	private void Update() {
 		if (next.x >= LAYERS_COUNT) return;
 		if (lastInputTime == 0f) return;
-		if (Time.time > lastInputTime + SECONDS_FOR_INPUT) {
+		if (Time.time > lastInputTime + SECONDS_FOR_INPUT && !TwitchPlaysActive) {
 			Debug.LogFormat("[MWISort #{0}] More than 10 seconds have passed since the last entry. Strike!", moduleId);
 			Strike();
 		}
@@ -118,10 +131,56 @@ public class MWISortModule : MonoBehaviour {
 		ResetButton.active = false;
 	}
 
+	public IEnumerator ProcessTwitchCommand(string command) {
+		command = command.Trim().ToLower();
+		if (command == "fill") command = "chain fill";
+		if (Regex.IsMatch(command, @"^input +\d{10}$")) command = "chain " + command.Split(' ').Last();
+		if (command.StartsWith("chain ")) {
+			command = command.Split(' ').Skip(1).Where(s => s.Length > 0).Join("");
+			if (!Regex.IsMatch(command, @"^((^|;)(\d{10}|fill))+$")) yield break;
+			string[] cmds = command.Split(';');
+			Debug.Log(cmds.Join("---"));
+			yield return null;
+			if (cmds.Length > LAYERS_COUNT - next.x) {
+				yield return "sendtochat {0}, !{1} chained commands count greater than unfilled displays count";
+				yield break;
+			}
+			int pivot = next.x;
+			int breakOn = next.x + cmds.Length;
+			while (next.x < breakOn) {
+				string cmd = cmds[next.x - pivot];
+				if (cmd == "fill") {
+					int[] unusedDigits = Enumerable.Range(0, 10).Where(i => buttons[next.x].All(b => b.digit != i)).ToArray();
+					Array.Sort(unusedDigits);
+					int[] unsetPositions = Enumerable.Range(0, 10).Where(p => buttons[next.x][p].digit == null).ToArray();
+					Array.Sort(unsetPositions);
+					int index = Array.IndexOf(unsetPositions, next.y);
+					yield return new[] { buttons[0].First(b => b.digit == unusedDigits[index]).Selectable };
+					continue;
+				}
+				int[] digits = cmd.Select(c => int.Parse(c.ToString())).ToArray();
+				yield return new[] { buttons[0].First(b => b.digit == digits[next.y]).Selectable };
+			}
+			yield break;
+		}
+		if (command.StartsWith("press ")) command = command.Skip(6).Join("").Trim();
+		if (Regex.IsMatch(command, @"^\d$")) {
+			int digit = int.Parse(command);
+			yield return null;
+			yield return new[] { buttons[0].First(b => b.digit == digit).Selectable };
+			yield break;
+		}
+		if (command == "reset") {
+			yield return null;
+			yield return new[] { ResetButton.Selectable };
+			yield break;
+		}
+	}
+
 	private void Strike() {
 		BombModule.HandleStrike();
 		lastInputTime = 0f;
-		if (next.x > 1 || next.y > 0) ResetButton.active = true;
+		if (buttons[1].Any(b => b.digit != null)) ResetButton.active = true;
 	}
 
 	private bool IsPossibleDigit(int digit) {
