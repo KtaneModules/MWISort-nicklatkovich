@@ -518,6 +518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29dc265f935e6724386350fc77857259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TwitchPlaysActive: 0
   Selectable: {fileID: 114967139498934536}
   Audio: {fileID: 114062056874963358}
   BombModule: {fileID: 114050758451370258}

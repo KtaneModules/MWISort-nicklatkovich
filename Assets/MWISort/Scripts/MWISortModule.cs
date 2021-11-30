@@ -91,12 +91,12 @@ public class MWISortModule : MonoBehaviour {
 			Strike();
 			return;
 		}
-		Audio.PlaySoundAtTransform("MWISortDigitPressed", button.transform);
 		lastInputTime = Time.time;
 		buttons[next.x][next.y].digit = digit;
 		buttons[next.x][next.y].next = false;
 		HashSet<Vector2Int> unsetPositions = new HashSet<Vector2Int>(buttons[next.x].Where(b => b.digit == null).Select(b => b.position));
-		if (unsetPositions.Count == 0) {
+		bool displayFilled = unsetPositions.Count == 0;
+		if (displayFilled) {
 			Debug.LogFormat("[MWISort #{0}] Display #{1} answer: {2}", moduleId, next.x, buttons[next.x].Select(b => b.digit.Value.ToString()).Join(""));
 			next = new Vector2Int(next.x + 1, Random.Range(0, 10));
 		} else next = unsetPositions.PickRandom();
@@ -110,13 +110,18 @@ public class MWISortModule : MonoBehaviour {
 				Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
 				Debug.LogFormat("[MWISort #{0}] Display #{1} sorted. Module solved!", moduleId, LAYERS_COUNT - 1);
 				BombModule.HandlePass();
+				Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, button.transform);
 				ResetButton.solved = true;
 			}
-		} else buttons[next.x][next.y].next = true;
+		} else {
+			Audio.PlaySoundAtTransform(displayFilled ? "MWISortDisplayFilled" : "MWISortDigitPressed", button.transform);
+			buttons[next.x][next.y].next = true;
+		}
 	}
 
 	private void Reset() {
 		if (!ResetButton.active || ResetButton.solved) return;
+		lastInputTime = 0f;
 		Audio.PlaySoundAtTransform("MWISortResetPressed", ResetButton.transform);
 		Debug.LogFormat("[MWISort #{0}] Reset pressed", moduleId);
 		for (int i = 1; i < LAYERS_COUNT; i++) {
